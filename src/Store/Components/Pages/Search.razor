@@ -1,6 +1,8 @@
 ﻿@page "/search"
+@using SearchEntities
 
 @inject Store.Services.ProductService ProductService
+@inject Store.Services.McpServerService McpServerService
 @inject IConfiguration Configuration
 @attribute [StreamRendering(true)]
 @rendermode InteractiveServer
@@ -20,6 +22,8 @@
     <div class="form-check form-switch mb-3">
         <InputCheckbox id="smartSearch2" @bind-Value="smartSearch" />
         <label class="form-check-label" for="smartSearch">Use Semantic Search</label>
+        <InputCheckbox id="mcpSearch" @bind-Value="mcpSearch" />
+        <label class="form-check-label" for="mcpSearch">Use MCP Server</label>
     </div>
     <hr />
     <p class="quote">@aiResponse</p>
@@ -72,6 +76,7 @@ else if (products != null)
     private string aiResponse = "";
     private string elapsedTime = "";
     private bool smartSearch = false;
+    private bool mcpSearch = false;
     private bool isLoading = false;
     private string errorMessage = "";
 
@@ -85,10 +90,17 @@ else if (products != null)
             aiResponse = "";
 
             await Task.Delay(500);
-            var response = await ProductService.Search(searchTerm, smartSearch);
+            SearchResponse? response = null;
+            if (mcpSearch)
+            {
+                response = await McpServerService.Search(searchTerm);
+            }
+            else
+            {
+                response = await ProductService.Search(searchTerm, smartSearch);
+            }
             aiResponse = response.Response!;
             products = response.Products;
-            elapsedTime = response.ElapsedTime.ToString();
         }
         catch (Exception ex)
         {

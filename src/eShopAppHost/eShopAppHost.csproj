@@ -15,6 +15,7 @@
     <PackageReference Include="Aspire.Hosting.SqlServer" Version="9.1.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\eShopMcpSseServer\eShopMcpSseServer.csproj" />
     <ProjectReference Include="..\Products\Products.csproj" />
     <ProjectReference Include="..\Store\Store.csproj" />
   </ItemGroup>

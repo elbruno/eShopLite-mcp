@@ -17,9 +17,9 @@ builder.Services.AddProblemDetails();
 // Add DbContext service
 builder.AddSqlServerDbContext<Context>("sqldb");
 
-// in local dev scenarios you can add a local user secret with the connection string to your resources, check the documentation to reuse existing AOAI resources
+// add openai client
 var azureOpenAiClientName = "openai";
-builder.AddAzureOpenAIClient(azureOpenAiClientName);
+builder.AddOpenAIClient(azureOpenAiClientName);
 
 // get azure openai client and create Chat client from aspire hosting configuration
 builder.Services.AddSingleton<ChatClient>(serviceProvider =>

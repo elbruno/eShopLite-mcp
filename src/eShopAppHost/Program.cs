@@ -9,9 +9,15 @@ var products = builder.AddProject<Projects.Products>("products")
     .WithReference(sqldb)
     .WaitFor(sqldb);
 
+var eshopmcpserver = builder.AddProject<Projects.eShopMcpSseServer>("eshopmcpserver")
+    .WithReference(products)
+    .WaitFor(products);
+
 var store = builder.AddProject<Projects.Store>("store")
     .WithReference(products)
     .WaitFor(products)
+    .WithReference(eshopmcpserver)
+    .WaitFor(eshopmcpserver)
     .WithExternalHttpEndpoints();
 
 if (builder.ExecutionContext.IsPublishMode)
@@ -29,6 +35,11 @@ if (builder.ExecutionContext.IsPublishMode)
         .AddDeployment(new AzureOpenAIDeployment(embeddingsDeploymentName,
         "text-embedding-ada-002",
         "2"));
+
+    eshopmcpserver.WithReference(appInsights)
+        .WithReference(aoai)
+        .WithEnvironment("AI_ChatDeploymentName", chatDeploymentName)
+        .WithEnvironment("AI_embeddingsDeploymentName", embeddingsDeploymentName);
 
     products.WithReference(appInsights)
         .WithReference(aoai)

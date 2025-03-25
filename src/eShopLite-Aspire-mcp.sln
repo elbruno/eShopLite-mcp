@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1 Aspire", "1 Aspire", "{02
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2 eShoplite", "2 eShoplite", "{BBB277E9-B789-440E-88FF-FB9C7E04D82A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShopMcpSseServer", "eShopMcpSseServer\eShopMcpSseServer.csproj", "{4F880BA4-7BD2-6FBA-1980-A45E27D5788D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,10 @@ Global
 		{79AC485A-9E33-4D5F-9F4B-C01448A26C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79AC485A-9E33-4D5F-9F4B-C01448A26C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79AC485A-9E33-4D5F-9F4B-C01448A26C04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F880BA4-7BD2-6FBA-1980-A45E27D5788D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F880BA4-7BD2-6FBA-1980-A45E27D5788D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F880BA4-7BD2-6FBA-1980-A45E27D5788D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F880BA4-7BD2-6FBA-1980-A45E27D5788D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -69,6 +75,7 @@ Global
 		{559D8A21-7CD5-4626-8C35-FD8BE60E9E39} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{76E2A7E9-B2EB-47DC-9F0C-096C848ED693} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{79AC485A-9E33-4D5F-9F4B-C01448A26C04} = {49AED1F4-8906-4AEC-B795-9F424886F802}
+		{4F880BA4-7BD2-6FBA-1980-A45E27D5788D} = {BBB277E9-B789-440E-88FF-FB9C7E04D82A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F9C7AE25-263B-4A02-9BC0-632370BB1004}
