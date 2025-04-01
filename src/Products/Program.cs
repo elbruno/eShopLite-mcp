@@ -1,3 +1,6 @@
+using ModelContextProtocol;
+using ModelContextProtocol.Client;
+using ModelContextProtocol.Protocol.Transport;
 using OpenAI;
 using OpenAI.Chat;
 using OpenAI.Embeddings;
@@ -57,6 +60,30 @@ builder.Services.AddSingleton<EmbeddingClient>(serviceProvider =>
         logger.LogError(exc, "Error creating embeddings client");
     }
     return embeddingsClient;
+});
+
+// add MCP client
+builder.Services.AddSingleton<IMcpClient>(sp =>
+{
+    McpClientOptions mcpClientOptions = new()
+    { ClientInfo = new() { Name = "AspNetCoreSseClient", Version = "1.0.0" } };
+
+    // can't use the service discovery for ["https +http://eshopmcpserver"]
+    // fix: read the environment value for the key 'services__eshopmcpserver__https__0' to get the url for the aspnet core sse server
+    var serviceName = "eshopmcpserver";
+    var name = $"services__{serviceName}__https__0";
+    var url = Environment.GetEnvironmentVariable(name) + "/sse";
+
+    McpServerConfig mcpServerConfig = new()
+    {
+        Id = "AspNetCoreSse",
+        Name = "AspNetCoreSse",
+        TransportType = TransportTypes.Sse,
+        Location = url
+    };
+
+    var mcpClient = McpClientFactory.CreateAsync(mcpServerConfig, mcpClientOptions).GetAwaiter().GetResult();
+    return mcpClient;
 });
 
 builder.Services.AddSingleton<IConfiguration>(sp =>

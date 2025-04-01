@@ -1,31 +1,25 @@
-﻿using Microsoft.AspNetCore.DataProtection.XmlEncryption;
-using Microsoft.Extensions.AI;
-using Microsoft.Extensions.Logging.Abstractions;
+﻿using Microsoft.Extensions.AI;
 using ModelContextProtocol.Client;
-using ModelContextProtocol.Configuration;
-using ModelContextProtocol.Protocol.Transport;
 using SearchEntities;
 
 namespace Store.Services;
 
 public class McpServerService
 {
-    private readonly HttpClient httpClient;
     private readonly ILogger<ProductService> logger;
     IMcpClient mcpClient = null!;
-    IList<AIFunction> tools = null!;
+    IList<McpClientTool> tools = null!;
     private Microsoft.Extensions.AI.IChatClient? client;
     private IList<ChatMessage> ChatMessages = [];
 
-    public McpServerService(HttpClient _httpClient, ILogger<ProductService> _logger, IMcpClient _mcpClient, IChatClient? _client)
+    public McpServerService(ILogger<ProductService> _logger, IMcpClient _mcpClient, IChatClient? _client)
     {
         logger = _logger;
-        httpClient = _httpClient;
         mcpClient = _mcpClient;
         client = _client;
 
         // get mcp server tools
-        tools = mcpClient.GetAIFunctionsAsync().GetAwaiter().GetResult();
+        tools = mcpClient.ListToolsAsync().GetAwaiter().GetResult();
     }
 
     public async Task<SearchResponse?> Search(string searchTerm)

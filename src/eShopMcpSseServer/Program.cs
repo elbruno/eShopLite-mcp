@@ -13,7 +13,7 @@ builder.Services.AddHttpClient<ProductService>(
     static client => client.BaseAddress = new("https+http://products"));
 
 // add MCP server
-builder.Services.AddMcpServer().WithTools();
+builder.Services.AddMcpServer().WithToolsFromAssembly();
 var app = builder.Build();
 
 // Initialize default endpoints
@@ -21,7 +21,7 @@ app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
 
 // map endpoints
-app.MapGet("/", () => $"Hello World! {DateTime.Now}");
+app.MapGet("/", () => $"eShopLite-MCP Server! {DateTime.Now}");
 app.MapMcpSse();
 
 app.Run();

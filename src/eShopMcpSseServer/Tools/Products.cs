@@ -5,10 +5,10 @@ using System.ComponentModel;
 
 namespace eShopMcpSseServer.Tools;
 
-[McpToolType]
+[McpServerToolType]
 public static class Products
 {
-    [McpTool, Description("Search outdoor products using a semantic search.")]
+    [McpServerTool, Description("Search outdoor products using a semantic search.")]
     public static SearchResponse SemanticSearchProducts(string query)
     {
         Console.WriteLine("==========================");

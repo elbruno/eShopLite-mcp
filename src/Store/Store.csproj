@@ -8,7 +8,7 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Aspire.OpenAI" Version="9.1.0-preview.1.25121.10" />
-		<PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.1.25171.12" />
+		<PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.4" />
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
 	</ItemGroup>
 	<ItemGroup>

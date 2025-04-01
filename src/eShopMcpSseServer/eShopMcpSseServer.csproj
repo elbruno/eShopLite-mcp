@@ -4,10 +4,11 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>8c4ff0c9-106c-4023-90d1-3bb1776abdbc</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.1.25171.12" />
+    <PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.4" />
   </ItemGroup>
 
   <ItemGroup>

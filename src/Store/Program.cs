@@ -1,9 +1,8 @@
 using Microsoft.Extensions.AI;
+using ModelContextProtocol;
 using ModelContextProtocol.Client;
-using ModelContextProtocol.Configuration;
 using ModelContextProtocol.Protocol.Transport;
 using OpenAI;
-using OpenAI.Chat;
 using Store.Components;
 using Store.Services;
 
@@ -18,8 +17,6 @@ builder.Services.AddHttpClient<ProductService>(
     static client => client.BaseAddress = new("https+http://products"));
 
 builder.Services.AddSingleton<McpServerService>();
-builder.Services.AddHttpClient<McpServerService>(
-    static client => client.BaseAddress = new("https+http://products/sse"));
 
 // add openai client
 var azureOpenAiClientName = "openai";
@@ -50,18 +47,21 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
 // create Mcp Client
 builder.Services.AddSingleton<IMcpClient>(serviceProvider =>
 {
-    var logger = serviceProvider.GetService<ILogger<Program>>()!;
-    logger.LogInformation($"Create Mcp Client");
-
-    // create the McpClient
     McpClientOptions mcpClientOptions = new()
     { ClientInfo = new() { Name = "AspNetCoreSseClient", Version = "1.0.0" } };
+
+    // can't use the service discovery for ["https +http://aspnetsseserver"]
+    // fix: read the environment value for the key 'services__aspnetsseserver__https__0' to get the url for the aspnet core sse server
+    var serviceName = "eshopmcpserver";
+    var name = $"services__{serviceName}__https__0";
+    var url = Environment.GetEnvironmentVariable(name) + "/sse";
+
     McpServerConfig mcpServerConfig = new()
     {
         Id = "AspNetCoreSse",
         Name = "AspNetCoreSse",
         TransportType = TransportTypes.Sse,
-        Location = "https://localhost:7133/sse"
+        Location = url
     };
 
     var mcpClient = McpClientFactory.CreateAsync(mcpServerConfig, mcpClientOptions).GetAwaiter().GetResult();
