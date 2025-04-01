@@ -33,14 +33,14 @@ public class McpServerService
             // call the desired Endpoint
             ChatMessages.Add(new ChatMessage(ChatRole.User, searchTerm));
             var responseComplete = await client.GetResponseAsync(
-                ChatMessages, 
+                ChatMessages,
                 new() { Tools = tools.ToArray() });
             logger.LogInformation($"Model Response: {responseComplete}");
             ChatMessages.AddMessages(responseComplete);
 
             SearchResponse searchResponse = new SearchResponse
             {
-                Response = responseComplete.Text
+                Response = "" //responseComplete.Text
             };
             return searchResponse;
         }

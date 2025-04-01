@@ -111,9 +111,15 @@ public static class ProductEndpoints
 
         group.MapGet("/search/{search}", async (string search, Context db) =>
         {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
             List<Product> products = await db.Product
             .Where(p => EF.Functions.Like(p.Name, $"%{search}%"))
             .ToListAsync();
+
+            stopwatch.Stop();
+
             var response = new SearchResponse();
             response.Products = products;
             response.Response = products.Count > 0 ?
@@ -132,7 +138,8 @@ public static class ProductEndpoints
                 return Results.Ok(result);
             })
             .WithName("AISearch")
-            .Produces<SearchResponse>(StatusCodes.Status200OK);
+            .Produces<SearchResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status404NotFound);
         #endregion
     }
 }

@@ -1,6 +1,3 @@
-using ModelContextProtocol;
-using ModelContextProtocol.Client;
-using ModelContextProtocol.Protocol.Transport;
 using OpenAI;
 using OpenAI.Chat;
 using OpenAI.Embeddings;
@@ -20,9 +17,9 @@ builder.Services.AddProblemDetails();
 // Add DbContext service
 builder.AddSqlServerDbContext<Context>("sqldb");
 
-// add openai client
+// in dev scenarios rename this to "openaidev", and check the documentation to reuse existing AOAI resources
 var azureOpenAiClientName = "openai";
-builder.AddOpenAIClient(azureOpenAiClientName);
+builder.AddAzureOpenAIClient(azureOpenAiClientName);
 
 // get azure openai client and create Chat client from aspire hosting configuration
 builder.Services.AddSingleton<ChatClient>(serviceProvider =>
@@ -60,30 +57,6 @@ builder.Services.AddSingleton<EmbeddingClient>(serviceProvider =>
         logger.LogError(exc, "Error creating embeddings client");
     }
     return embeddingsClient;
-});
-
-// add MCP client
-builder.Services.AddSingleton<IMcpClient>(sp =>
-{
-    McpClientOptions mcpClientOptions = new()
-    { ClientInfo = new() { Name = "AspNetCoreSseClient", Version = "1.0.0" } };
-
-    // can't use the service discovery for ["https +http://eshopmcpserver"]
-    // fix: read the environment value for the key 'services__eshopmcpserver__https__0' to get the url for the aspnet core sse server
-    var serviceName = "eshopmcpserver";
-    var name = $"services__{serviceName}__https__0";
-    var url = Environment.GetEnvironmentVariable(name) + "/sse";
-
-    McpServerConfig mcpServerConfig = new()
-    {
-        Id = "AspNetCoreSse",
-        Name = "AspNetCoreSse",
-        TransportType = TransportTypes.Sse,
-        Location = url
-    };
-
-    var mcpClient = McpClientFactory.CreateAsync(mcpServerConfig, mcpClientOptions).GetAwaiter().GetResult();
-    return mcpClient;
 });
 
 builder.Services.AddSingleton<IConfiguration>(sp =>
@@ -130,12 +103,6 @@ using (var scope = app.Services.CreateScope())
         app.Logger.LogError(exc, "Error creating database");
     }
     DbInitializer.Initialize(context);
-
-    app.Logger.LogInformation("Start fill products in vector db");
-    var memoryContext = app.Services.GetRequiredService<MemoryContext>();
-    await memoryContext.InitMemoryContextAsync(context);
-    app.Logger.LogInformation("Done fill products in vector db");
-
 }
 
 app.Run();
