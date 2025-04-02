@@ -48,11 +48,20 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
     //}
 
     var (endpoint, apiKey) = GetEndpointAndKey(builder, azureOpenAiClientName);
+
+    // validate that the endpoint must end with openai.azure.com/openai/deployments/modelname, if not fix the endpoint url
+    if (!endpoint.EndsWith($"openai/deployments/{chatDeploymentName}"))
+    {
+        logger.LogInformation($"Invalid endpoint: {endpoint}");
+        endpoint = endpoint + $"openai/deployments/{chatDeploymentName}";
+        logger.LogInformation($"Fixed endpoint: {endpoint}");
+    }
+
     if (string.IsNullOrEmpty(apiKey))
     {
         // no apikey, use default azure credential  
         var endpointModel = new Uri(endpoint);
-        logger.LogInformation($"No ApiKey, use default azure credentials.");
+        logger.LogInformation($"No ApiKey, use DEFAULT AZURE CREDENTIALS");
         logger.LogInformation($"Creating chat client with modelId: [{chatDeploymentName}] / endpoint: [{endpoint}]");
 
         chatClient = new Azure.AI.Inference.ChatCompletionsClient(
@@ -66,8 +75,8 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
     else
     {
         // using ApiKey
-        logger.LogInformation($"ApiKey Found, use ApiKey credentials.");
-        logger.LogInformation($"Creating chat client with modelId: [{chatDeploymentName}] / endpoint: [{endpoint}]");
+        logger.LogInformation($"ApiKey Found, use APIKEY CREDENTIALS");
+        logger.LogInformation($"Creating chat client with modelId: [{chatDeploymentName}] / endpoint: [{endpoint}] / ApiKey length: {apiKey.Length}");
         chatClient = new Azure.AI.Inference.ChatCompletionsClient(
             endpoint: new Uri(endpoint),
             credential: new AzureKeyCredential(apiKey))
