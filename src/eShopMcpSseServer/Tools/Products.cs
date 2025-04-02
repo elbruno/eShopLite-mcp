@@ -6,24 +6,31 @@ using System.ComponentModel;
 namespace eShopMcpSseServer.Tools;
 
 [McpServerToolType]
-public static class Products
+public static class Products 
 {
-    [McpServerTool, Description("Search outdoor products using a semantic search.")]
-    public static SearchResponse SemanticSearchProducts(string query)
+    [McpServerTool(Name = "SemanticSearchProducts"), Description("Performs a search in the outdoor products catalog. Returns a text with the found products")]
+    public static async Task<SearchResponse> SemanticSearchProducts(
+        ProductService productService,
+        ILogger<ProductService> logger,
+        [Description("The search query to be used in the products search")] string query)
     {
-        Console.WriteLine("==========================");
-        Console.WriteLine($"Function Search products: {query}");
-        
-        // get an instance of the product service registered in the DI container
-        var serviceProvider = new ServiceCollection()
-            .AddSingleton<ProductService>()
-            .BuildServiceProvider();
-        var productService = serviceProvider.GetService<ProductService>();
-        var response = productService.Search(query, true).GetAwaiter().GetResult();
+        logger.LogInformation("==========================");
+        logger.LogInformation($"Function Search products: {query}");
 
-        Console.WriteLine($"Response: {response?.Response}");
-        Console.WriteLine($"Function End Semantic Search");
-        Console.WriteLine("==========================");
+        SearchResponse response = new SearchResponse();
+        try
+        {
+            // call the desired Endpoint
+            response = await productService.Search(query, true);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError($"Error during Search: {ex.Message}");
+            response.Response = $"No response. {ex}";
+        }
+
+        logger.LogInformation($"Response: {response?.Response}");
+        logger.LogInformation("==========================");
         return response;
     }
 }

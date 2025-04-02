@@ -14,6 +14,7 @@ builder.Services.AddHttpClient<ProductService>(
 
 // add MCP server
 builder.Services.AddMcpServer().WithToolsFromAssembly();
+
 var app = builder.Build();
 
 // Initialize default endpoints

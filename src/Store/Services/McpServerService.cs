@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.AI;
 using ModelContextProtocol.Client;
 using SearchEntities;
+using System.Web;
 
 namespace Store.Services;
 
@@ -9,14 +10,14 @@ public class McpServerService
     private readonly ILogger<ProductService> logger;
     IMcpClient mcpClient = null!;
     IList<McpClientTool> tools = null!;
-    private Microsoft.Extensions.AI.IChatClient? client;
+    private Microsoft.Extensions.AI.IChatClient? chatClient;
     private IList<ChatMessage> ChatMessages = [];
 
-    public McpServerService(ILogger<ProductService> _logger, IMcpClient _mcpClient, IChatClient? _client)
+    public McpServerService(ILogger<ProductService> _logger, IMcpClient _mcpClient, IChatClient? _chatClient)
     {
         logger = _logger;
         mcpClient = _mcpClient;
-        client = _client;
+        chatClient = _chatClient;
 
         // get mcp server tools
         tools = mcpClient.ListToolsAsync().GetAwaiter().GetResult();
@@ -32,7 +33,7 @@ public class McpServerService
 
             // call the desired Endpoint
             ChatMessages.Add(new ChatMessage(ChatRole.User, searchTerm));
-            var responseComplete = await client.GetResponseAsync(
+            var responseComplete = await chatClient.GetResponseAsync(
                 ChatMessages,
                 new() { Tools = tools.ToArray() });
             logger.LogInformation($"Model Response: {responseComplete}");
@@ -40,7 +41,7 @@ public class McpServerService
 
             SearchResponse searchResponse = new SearchResponse
             {
-                Response = "" //responseComplete.Text
+                Response = responseComplete.Text
             };
             return searchResponse;
         }

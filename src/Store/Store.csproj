@@ -7,12 +7,18 @@
 		<UserSecretsId>88541b34-b9e3-4d23-b18b-67dcae1162ba</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Aspire.OpenAI" Version="9.1.0-preview.1.25121.10" />
+		<!--<PackageReference Include="Aspire.OpenAI" Version="9.1.0-preview.1.25121.10" />
 		<PackageReference Include="Aspire.Azure.AI.OpenAI" Version="9.1.0-preview.1.25121.10" />
 		<PackageReference Include="Azure.AI.OpenAI" Version="2.2.0-beta.4" />
-		<PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="9.3.0-preview.1.25161.3" />
-		<PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.4" />
+		-->
+		<!--<PackageReference Include="Aspire.Azure.AI.OpenAI" Version="9.1.0-preview.1.25121.10" />-->
+		
 		<PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
+		<PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.4" />
+		<PackageReference Include="Azure.AI.OpenAI" Version="2.2.0-beta.4" />
+		<PackageReference Include="Azure.Identity" Version="1.14.0-beta.2" />
+		<PackageReference Include="Microsoft.Extensions.AI.AzureAIInference" Version="9.3.0-preview.1.25161.3" />
+
 	</ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\DataEntities\DataEntities.csproj" />
