@@ -39,10 +39,28 @@ public class McpServerService
             logger.LogInformation($"Model Response: {responseComplete}");
             ChatMessages.AddMessages(responseComplete);
 
+            // create search response
             SearchResponse searchResponse = new SearchResponse
             {
                 Response = responseComplete.Text
             };
+
+
+            // iterate through the messages
+            foreach (var message in responseComplete.Messages)
+            {
+                // validate if the message is a function call
+                if (message.Role == ChatRole.Tool)
+                {
+                    var fr = message.Contents.FirstOrDefault() as FunctionResultContent;
+
+                    // deserialize the message.RawRepresentation, in Json, to a SearchResponse object
+                    var searchResponseTool = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(fr.Result.ToString());
+                    searchResponse.Products = searchResponseTool?.Products;
+                }
+            }
+
+
             return searchResponse;
         }
         catch (Exception ex)
