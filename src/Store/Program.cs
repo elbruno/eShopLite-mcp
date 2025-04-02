@@ -58,7 +58,7 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
         chatClient = new Azure.AI.Inference.ChatCompletionsClient(
             endpoint: new Uri(endpoint),
             credential: new DefaultAzureCredential())
-        .AsChatClient()
+        .AsChatClient(chatDeploymentName)
         .AsBuilder()
         .UseFunctionInvocation()
         .Build();

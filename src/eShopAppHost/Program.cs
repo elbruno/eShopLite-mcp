@@ -47,6 +47,7 @@ if (builder.ExecutionContext.IsPublishMode)
         .WithEnvironment("AI_embeddingsDeploymentName", embeddingsDeploymentName);
 
     store.WithReference(appInsights)
+        .WithReference(aoai)
         .WithExternalHttpEndpoints();
 }
 
