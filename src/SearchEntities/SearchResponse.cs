@@ -8,22 +8,22 @@ public class SearchResponse
     {
         Products = new List<DataEntities.Product>();
         Response = string.Empty;
-        FunctionCallId = string.Empty;
-        FunctionCallName = string.Empty;
-        ServerInfoName = string.Empty;
+        McpFunctionCallId = string.Empty;
+        McpFunctionCallName = string.Empty;
+        McpServerInfoName = string.Empty;
     }
 
     [JsonPropertyName("Response")]
     public string Response { get; set; }
 
-    [JsonPropertyName("FunctionCallName")]
-    public string FunctionCallId { get; set; }
+    [JsonPropertyName("McpFunctionCallId")]
+    public string McpFunctionCallId { get; set; }
 
-    [JsonPropertyName("FunctionCallName")]
-    public string FunctionCallName { get; set; }
+    [JsonPropertyName("McpFunctionCallName")]
+    public string McpFunctionCallName { get; set; }
 
-    [JsonPropertyName("ServerInfoName")]
-    public string ServerInfoName { get; set; }
+    [JsonPropertyName("McpServerInfoName")]
+    public string McpServerInfoName { get; set; }
 
     [JsonPropertyName("Products")]
     public List<DataEntities.Product>? Products { get; set; }

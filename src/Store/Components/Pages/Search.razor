@@ -29,7 +29,7 @@
     <p class="quote">@searchResponse.Response</p>
 </div>
 
-@if (!string.IsNullOrEmpty(searchResponse.FunctionCallId))
+@if (!string.IsNullOrEmpty(searchResponse.McpFunctionCallId))
 {
     <div class="card mb-3">
         <div class="card-header" @onclick="ToggleFunctionInfo" style="cursor: pointer;">
@@ -42,15 +42,15 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4"><strong>Function Call ID:</strong></div>
-                    <div class="col-md-8">@searchResponse.FunctionCallId</div>
+                    <div class="col-md-8">@searchResponse.McpFunctionCallId</div>
                 </div>
                 <div class="row">
                     <div class="col-md-4"><strong>Function Name:</strong></div>
-                    <div class="col-md-8">@searchResponse.FunctionCallName</div>
+                    <div class="col-md-8">@searchResponse.McpFunctionCallName</div>
                 </div>
                 <div class="row">
                     <div class="col-md-4"><strong>Server Name:</strong></div>
-                    <div class="col-md-8">@searchResponse.ServerInfoName</div>
+                    <div class="col-md-8">@searchResponse.McpServerInfoName</div>
                 </div>
             </div>
         </div>

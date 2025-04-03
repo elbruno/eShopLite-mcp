@@ -24,8 +24,8 @@ public static class Products
         {
             // call the desired Endpoint
             response = await productService.Search(query, true);
-            response.FunctionCallName = "SemanticSearchProducts";
-            response.ServerInfoName = currentMcpServer.ServerOptions.ServerInfo.Name;
+            response.McpFunctionCallName = "SemanticSearchProducts";
+            response.McpServerInfoName = currentMcpServer.ServerOptions.ServerInfo.Name;
         }
         catch (Exception ex)
         {
