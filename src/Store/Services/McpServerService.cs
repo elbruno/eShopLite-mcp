@@ -52,10 +52,16 @@ public class McpServerService
                 // validate if the message is a function call
                 if (message.Role == ChatRole.Tool)
                 {
-                    var fr = message.Contents.FirstOrDefault() as FunctionResultContent;
+                    var functionResult = message.Contents.FirstOrDefault() as FunctionResultContent;
+                    string functionResultJson = functionResult.Result.ToString();
+
+                    // from the functionResultJson, get the element at [JSON].content.[0].text
+                    // this is the serialization from the function call response object
+                    var json = System.Text.Json.JsonDocument.Parse(functionResultJson);
+                    var searchResponseJson = json.RootElement.GetProperty("content").EnumerateArray().FirstOrDefault().GetProperty("text").ToString();
 
                     // deserialize the message.RawRepresentation, in Json, to a SearchResponse object
-                    var searchResponseTool = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(fr.Result.ToString());
+                    var searchResponseTool = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(searchResponseJson);
                     searchResponse.Products = searchResponseTool?.Products;
                 }
             }

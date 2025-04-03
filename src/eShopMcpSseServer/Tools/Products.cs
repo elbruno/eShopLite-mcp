@@ -17,7 +17,7 @@ public static class Products
         logger.LogInformation("==========================");
         logger.LogInformation($"Function Search products: {query}");
 
-        SearchResponse response = new SearchResponse();
+        SearchResponse response = new();
         try
         {
             // call the desired Endpoint
