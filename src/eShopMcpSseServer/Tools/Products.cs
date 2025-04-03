@@ -2,6 +2,7 @@
 using ModelContextProtocol.Server;
 using SearchEntities;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 namespace eShopMcpSseServer.Tools;
 
@@ -12,6 +13,7 @@ public static class Products
     public static async Task<SearchResponse> SemanticSearchProducts(
         ProductService productService,
         ILogger<ProductService> logger,
+        IMcpServer currentMcpServer,
         [Description("The search query to be used in the products search")] string query)
     {
         logger.LogInformation("==========================");
@@ -22,6 +24,8 @@ public static class Products
         {
             // call the desired Endpoint
             response = await productService.Search(query, true);
+            response.FunctionCallName = "SemanticSearchProducts";
+            response.ServerInfoName = currentMcpServer.ServerOptions.ServerInfo.Name;
         }
         catch (Exception ex)
         {

@@ -26,8 +26,36 @@
         <label class="form-check-label" for="mcpSearch">Use MCP Server</label>
     </div>
     <hr />
-    <p class="quote">@aiResponse</p>
+    <p class="quote">@searchResponse.Response</p>
 </div>
+
+@if (!string.IsNullOrEmpty(searchResponse.FunctionCallId))
+{
+    <div class="card mb-3">
+        <div class="card-header" @onclick="ToggleFunctionInfo" style="cursor: pointer;">
+            <div class="d-flex justify-content-between align-items-center">
+                <span>Function Call Details</span>
+                <i class="@(showFunctionInfo ? "oi oi-chevron-top" : "oi oi-chevron-bottom")"></i>
+            </div>
+        </div>
+        <div class="collapse @(showFunctionInfo ? "show" : "")" id="functionCallDetails">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4"><strong>Function Call ID:</strong></div>
+                    <div class="col-md-8">@searchResponse.FunctionCallId</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><strong>Function Name:</strong></div>
+                    <div class="col-md-8">@searchResponse.FunctionCallName</div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4"><strong>Server Name:</strong></div>
+                    <div class="col-md-8">@searchResponse.ServerInfoName</div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @if (isLoading)
 {
@@ -44,7 +72,7 @@ else if (!string.IsNullOrEmpty(errorMessage))
         @errorMessage
     </div>
 }
-else if (products != null)
+else if (searchResponse.Products != null && searchResponse.Products.Count > 0)
 {
     <table class="table">
         <thead>
@@ -56,7 +84,7 @@ else if (products != null)
             </tr>
         </thead>
         <tbody>
-            @foreach (var product in products)
+            @foreach (var product in searchResponse.Products)
             {
                 <tr>
                     <!-- Simulating images being hosted on a CDN -->
@@ -71,14 +99,13 @@ else if (products != null)
 }
 
 @code {
+    private SearchResponse searchResponse = new();
     private string searchTerm = "";
-    private List<DataEntities.Product>? products;
-    private string aiResponse = "";
-    private string elapsedTime = "";
     private bool smartSearch = false;
     private bool mcpSearch = false;
     private bool isLoading = false;
     private string errorMessage = "";
+    private bool showFunctionInfo = false;
 
     private async Task DoSearch(MouseEventArgs e)
     {
@@ -86,21 +113,17 @@ else if (products != null)
         {
             isLoading = true;
             errorMessage = "";
-            products = null;
-            aiResponse = "";
 
-            await Task.Delay(500);
-            SearchResponse? response = null;
+            searchResponse = new();
             if (mcpSearch)
             {
-                response = await McpServerService.Search(searchTerm);
+                searchResponse = await McpServerService.Search(searchTerm);
             }
             else
             {
-                response = await ProductService.Search(searchTerm, smartSearch);
-            }
-            aiResponse = response.Response!;
-            products = response.Products;
+                searchResponse = await ProductService.Search(searchTerm, smartSearch);
+            }           
+
         }
         catch (Exception ex)
         {
@@ -110,5 +133,9 @@ else if (products != null)
         {
             isLoading = false;
         }
+    }
+    private void ToggleFunctionInfo()
+    {
+        showFunctionInfo = !showFunctionInfo;
     }
 }

@@ -63,6 +63,9 @@ public class McpServerService
                     // deserialize the message.RawRepresentation, in Json, to a SearchResponse object
                     var searchResponseTool = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(searchResponseJson);
                     searchResponse.Products = searchResponseTool?.Products;
+                    searchResponse.FunctionCallId = functionResult.CallId;
+                    searchResponse.FunctionCallName = searchResponseTool?.FunctionCallName;
+                    searchResponse.ServerInfoName = searchResponseTool?.ServerInfoName;
                 }
             }
 
