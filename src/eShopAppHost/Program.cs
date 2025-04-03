@@ -11,7 +11,8 @@ var products = builder.AddProject<Projects.Products>("products")
 
 var eshopmcpserver = builder.AddProject<Projects.eShopMcpSseServer>("eshopmcpserver")
     .WithReference(products)
-    .WaitFor(products);
+    .WaitFor(products)
+    .WithExternalHttpEndpoints();
 
 var store = builder.AddProject<Projects.Store>("store")
     .WithReference(products)
@@ -36,12 +37,12 @@ if (builder.ExecutionContext.IsPublishMode)
         "text-embedding-ada-002",
         "2"));
 
-    eshopmcpserver.WithReference(appInsights)
+    products.WithReference(appInsights)
         .WithReference(aoai)
         .WithEnvironment("AI_ChatDeploymentName", chatDeploymentName)
         .WithEnvironment("AI_embeddingsDeploymentName", embeddingsDeploymentName);
 
-    products.WithReference(appInsights)
+    eshopmcpserver.WithReference(appInsights)
         .WithReference(aoai)
         .WithEnvironment("AI_ChatDeploymentName", chatDeploymentName)
         .WithEnvironment("AI_embeddingsDeploymentName", embeddingsDeploymentName);

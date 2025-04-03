@@ -1,15 +1,10 @@
-using Azure;
-using Azure.AI.OpenAI;
-using Azure.Identity;
 using Microsoft.Extensions.AI;
-using Microsoft.Extensions.Logging;
 using ModelContextProtocol;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol.Transport;
 using OpenAI;
 using Store.Components;
 using Store.Services;
-using System.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +20,7 @@ builder.Services.AddSingleton<McpServerService>();
 
 // add openai client
 var azureOpenAiClientName = "openai";
-// builder.AddOpenAIClient(azureOpenAiClientName);
+builder.AddOpenAIClient(azureOpenAiClientName);
 
 // get azure openai client and create Chat client from aspire hosting configuration
 builder.Services.AddSingleton<IChatClient>(serviceProvider =>
@@ -34,56 +29,17 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
     var logger = serviceProvider.GetService<ILogger<Program>>()!;
     logger.LogInformation($"Chat client configuration, modelId: {chatDeploymentName}");
     IChatClient chatClient = null;
-    //try
-    //{
-    //    OpenAIClient client = serviceProvider.GetRequiredService<OpenAIClient>();
-    //    chatClient = client.AsChatClient(chatDeploymentName)
-    //                    .AsBuilder()
-    //                    .UseFunctionInvocation()
-    //                    .Build();
-    //}
-    //catch (Exception exc)
-    //{
-    //    logger.LogError(exc, "Error creating embeddings client");
-    //}
-
-    var (endpoint, apiKey) = GetEndpointAndKey(builder, azureOpenAiClientName);
-
-    // validate that the endpoint must end with openai.azure.com/openai/deployments/modelname, if not fix the endpoint url
-    if (!endpoint.EndsWith($"openai/deployments/{chatDeploymentName}"))
+    try
     {
-        logger.LogInformation($"Invalid endpoint: {endpoint}");
-        endpoint = endpoint + $"openai/deployments/{chatDeploymentName}";
-        logger.LogInformation($"Fixed endpoint: {endpoint}");
+        OpenAIClient client = serviceProvider.GetRequiredService<OpenAIClient>();
+        chatClient = client.AsChatClient(chatDeploymentName)
+                        .AsBuilder()
+                        .UseFunctionInvocation()
+                        .Build();
     }
-
-    if (string.IsNullOrEmpty(apiKey))
+    catch (Exception exc)
     {
-        // no apikey, use default azure credential  
-        var endpointModel = new Uri(endpoint);
-        logger.LogInformation($"No ApiKey, use DEFAULT AZURE CREDENTIALS");
-        logger.LogInformation($"Creating chat client with modelId: [{chatDeploymentName}] / endpoint: [{endpoint}]");
-
-        chatClient = new Azure.AI.Inference.ChatCompletionsClient(
-            endpoint: new Uri(endpoint),
-            credential: new DefaultAzureCredential())
-        .AsChatClient(chatDeploymentName)
-        .AsBuilder()
-        .UseFunctionInvocation()
-        .Build();
-    }
-    else
-    {
-        // using ApiKey
-        logger.LogInformation($"ApiKey Found, use APIKEY CREDENTIALS");
-        logger.LogInformation($"Creating chat client with modelId: [{chatDeploymentName}] / endpoint: [{endpoint}] / ApiKey length: {apiKey.Length}");
-        chatClient = new Azure.AI.Inference.ChatCompletionsClient(
-            endpoint: new Uri(endpoint),
-            credential: new AzureKeyCredential(apiKey))
-        .AsChatClient(chatDeploymentName)
-        .AsBuilder()
-        .UseFunctionInvocation()
-        .Build(); 
+        logger.LogError(exc, "Error creating embeddings client");
     }
     return chatClient;
 });
@@ -138,11 +94,3 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
-
-
-static (string endpoint, string apiKey) GetEndpointAndKey(WebApplicationBuilder builder, string name)
-{
-    var connectionString = builder.Configuration.GetConnectionString(name);
-    var parameters = HttpUtility.ParseQueryString(connectionString.Replace(";", "&"));
-    return (parameters["Endpoint"], parameters["Key"]);
-}
