@@ -3,6 +3,7 @@ using ModelContextProtocol;
 using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol.Transport;
 using OpenAI;
+using OpenAI.Chat;
 using Store.Components;
 using Store.Services;
 
@@ -31,15 +32,37 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
     IChatClient chatClient = null;
     try
     {
+        logger.LogInformation($"getting .GetRequiredService<OpenAIClient>");
         OpenAIClient client = serviceProvider.GetRequiredService<OpenAIClient>();
+        logger.LogInformation($"DONE getting .GetRequiredService<OpenAIClient>");
+
+        logger.LogInformation($"getting client.AsChatClient(chatDeploymentName)");
         chatClient = client.AsChatClient(chatDeploymentName)
-                        .AsBuilder()
-                        .UseFunctionInvocation()
-                        .Build();
+            .AsBuilder()
+            .UseFunctionInvocation()
+            .Build();
     }
     catch (Exception exc)
     {
-        logger.LogError(exc, "Error creating embeddings client");
+        logger.LogError(exc, "Error creating <IChatClient> client");
+    }
+    return chatClient;
+});
+
+builder.Services.AddSingleton<ChatClient>(serviceProvider =>
+{
+    var chatDeploymentName = "gpt-4o-mini";
+    var logger = serviceProvider.GetService<ILogger<Program>>()!;
+    logger.LogInformation($"Chat client configuration, modelId: {chatDeploymentName}");
+    ChatClient chatClient = null;
+    try
+    {
+        OpenAIClient client = serviceProvider.GetRequiredService<OpenAIClient>();
+        chatClient = client.GetChatClient(chatDeploymentName);
+    }
+    catch (Exception exc)
+    {
+        logger.LogError(exc, "Error creating <ChatClient> client");
     }
     return chatClient;
 });
