@@ -51,6 +51,7 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
     return chatClient;
 });
 
+// get OpenAI client and create Chat client from aspire hosting configuration
 builder.Services.AddSingleton<ChatClient>(serviceProvider =>
 {
     var chatDeploymentName = "gpt-4o-mini";
