@@ -1,3 +1,4 @@
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
 using ModelContextProtocol;
 using ModelContextProtocol.Client;
@@ -22,6 +23,7 @@ builder.Services.AddSingleton<McpServerService>();
 // add openai client
 var azureOpenAiClientName = "openai";
 builder.AddOpenAIClient(azureOpenAiClientName);
+builder.AddAzureOpenAIClient(azureOpenAiClientName);
 
 // get azure openai client and create Chat client from aspire hosting configuration
 builder.Services.AddSingleton<IChatClient>(serviceProvider =>
@@ -33,7 +35,7 @@ builder.Services.AddSingleton<IChatClient>(serviceProvider =>
     try
     {
         logger.LogInformation($"getting .GetRequiredService<OpenAIClient>");
-        OpenAIClient client = serviceProvider.GetRequiredService<OpenAIClient>();
+        OpenAIClient client = serviceProvider.GetRequiredService<AzureOpenAIClient>();
         logger.LogInformation($"DONE getting .GetRequiredService<OpenAIClient>");
 
         logger.LogInformation($"getting client.AsChatClient(chatDeploymentName)");
