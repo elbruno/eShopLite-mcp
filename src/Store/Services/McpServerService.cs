@@ -55,17 +55,27 @@ public class McpServerService
                     var functionResult = message.Contents.FirstOrDefault() as FunctionResultContent;
                     string functionResultJsonString = functionResult.Result.ToString();
 
+                    // get the fnc call id
+                    searchResponse.McpFunctionCallId = functionResult.CallId;
+
                     // from the functionResultJson, get the element at [JSON].content.[0].text
                     // this is the serialization from the function call response object
                     var functionResultJson = System.Text.Json.JsonDocument.Parse(functionResultJsonString);
                     var searchResponseJson = functionResultJson.RootElement.GetProperty("content").EnumerateArray().FirstOrDefault().GetProperty("text").ToString();
 
-                    // deserialize the message.RawRepresentation, in Json, to a SearchResponse object
-                    var searchResponseTool = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(searchResponseJson);
-                    searchResponse.Products = searchResponseTool?.Products;
-                    searchResponse.McpFunctionCallId = functionResult.CallId;
-                    searchResponse.McpFunctionCallName = searchResponseTool?.McpFunctionCallName;
-                    searchResponse.McpServerInfoName = searchResponseTool?.McpServerInfoName;
+                    // try to deserialize the message.RawRepresentation, in Json, to a SearchResponse object
+                    try
+                    {
+                        var searchResponseTool = System.Text.Json.JsonSerializer.Deserialize<SearchResponse>(searchResponseJson);
+                        searchResponse.Products = searchResponseTool?.Products;
+                        searchResponse.McpFunctionCallName = searchResponseTool?.McpFunctionCallName;
+                        searchResponse.McpServerInfoName = searchResponseTool?.McpServerInfoName;
+                    }
+                    catch (Exception exc)
+                    {
+                        logger.LogError(exc, "Error deserializing function result JSON to SearchResponse object.");
+                    }
+
                 }
             }
 
